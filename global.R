@@ -1,23 +1,28 @@
 # Global
 
-
 library(shiny)
 library(plotly)
 library(shinyWidgets)
+library(shinycssloaders)
 library(dplyr)
 library(DT)
 
-plot_box <- function(title_plot, plot_output) {
+tweet_count_term_data <- readRDS("data/tweet_count_term_data.rds")
+tweet_count_data <- readRDS("data/tweet_count_data.rds")
+
+covid_stats <- readRDS("data/covid_open_data.rds")
+
+plot_box <- function(title_plot, plot_output, source = "Blablabla") {
   div(h4(title_plot),
-      p("Source: Blablabla"),
-      plotlyOutput(plot_output))
+      p(paste0("Source: ", source)),
+      withSpinner(plotlyOutput(plot_output)))
 }
 
 
-measure_list <- c("Visits to selected media", "Retweets/favourites",
-                 "Visits to coronavirus pages in HPS", "Sentiment analysis",
-                 "Positive cases of coronavirus", "Calls to NHS 24", 
-                 "Most used word", "Deaths attributed to coronavirus",
-                 "A&E attendances")
+xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14), 
+                    showline = TRUE, tickangle = 270, fixedrange=TRUE)
+
+yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4, 
+                    tickfont = list(size=14), titlefont = list(size=14)) 
 
 ##END
