@@ -1,13 +1,22 @@
 #UI
-navbarPage(
-  title = "Media response to coronavirus - DRAFT - NO REAL DATA USED",
-  windowTitle = "Media response to coronavirus", #title for browser tab
-  header = tags$head(includeCSS("www/styles.css")),
+navbarPage(id = "intabset", # id used for jumping between tabs
+           title = div(tags$a(img(src="phs-logo.png", height=40), href= "https://www.publichealthscotland.scot/"),
+                       style = "position: relative; top: -5px;"), 
+  windowTitle = "Reactions to coronavirus in Twitter", #title for browser tab
+  header = tags$head(includeCSS("www/styles.css"),
+                     tags$link(rel="shortcut icon", href="favicon_phs.ico")), #Icon for browser tab),
   tabPanel(
-    title = "Public health communications", icon = icon("newspaper"),
-    wellPanel("We could add filters to select area and period of time for example. ",
+    title = "Twitter", icon = icon("twitter"),
+    h2("Reactions to coronavirus in Twitter by Scottish residents"),
+    wellPanel(column(6, "We could add filters to select area and period of time for example. ",
               "Another thing missing from this dashboard is the data for people self-reporting symptoms
               as I haven't got it."),
+              column(6, pickerInput(inputId = "term_picker", 
+                label = "Select/deselect terms of interest", 
+                choices = unique(tweet_count_term_data$search_term), 
+                options = list( `actions-box` = TRUE,  size = 10  ), 
+                multiple = TRUE, selected = c("Testing", "Tracing", "Coronavirus/COVID-19")))
+              ),
     mainPanel(width = 12,
               fluidRow(column(6,
                               plot_box("Number of tweets per day", "tweet_count", 
@@ -21,6 +30,10 @@ navbarPage(
                                        be developed better by us or by them.)"),
                               plot_box("Average sentiment per group", "search_term_sentiment", 
                                        source = "Deep Miner"))),
+              fluidRow(column(2,h4("Top words used during the whole period"),
+                              tableOutput("top_words")),
+                       column(10, h4("Top words used split by week (this could be refined and could be split by people/location/event)"),
+                              tableOutput("word_weekly"))),
               fluidRow(column(6,
                               plot_box("Testing - Daily people found positive" , "daily_positives", 
                                        source = "SG open data"),

@@ -21,37 +21,30 @@ function(input, output, session) {
       
   }
   
+  plot_term_chart  <- function(var_chosen) {
+    
+    plot_data <- tweet_count_term_data %>% filter(search_term %in% input$term_picker)
+    
+    #Creating time trend plot
+    plot_ly(data=plot_data, x=~date,  y =  ~get(var_chosen)) %>% 
+      add_trace(type = 'scatter', mode = 'lines+markers', 
+                color = ~search_term, colors = term_palette,
+                marker = list(size = 8)) %>% 
+      #Layout 
+      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%  
+      config(displayModeBar = FALSE, displaylogo = F) # taking out plotly logo button
+    
+  }
+  
   ###############################################.
   ## Charts ----
   ###############################################.
-  
-  
   output$tweet_count <- renderPlotly(plot_trend_chart(tweet_count_data,  var_chosen="count"))
   output$tweet_sentiment <- renderPlotly(plot_trend_chart(tweet_count_data, var_chosen = "sentiment"))
   
-  output$search_term_count <- renderPlotly({
-    #Creating time trend plot
-    trend_plot <- plot_ly(data=tweet_count_term_data, x=~date,  y = ~proportion) %>% 
-      add_trace(type = 'scatter', mode = 'lines+markers', 
-                color = ~search_term, 
-                marker = list(size = 8)) %>% 
-      #Layout 
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%  
-      config(displayModeBar = FALSE, displaylogo = F) # taking out plotly logo button
-  })
-  
-  output$search_term_sentiment <- renderPlotly({
-    #Creating time trend plot
-    trend_plot <- plot_ly(data=tweet_count_term_data, x=~date,  y = ~sentiment) %>% 
-      add_trace(type = 'scatter', mode = 'lines+markers', 
-                color = ~search_term, 
-                marker = list(size = 8)) %>% 
-      #Layout 
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%  
-      config(displayModeBar = FALSE, displaylogo = F) # taking out plotly logo button
-  })
+  output$search_term_count <- renderPlotly({plot_term_chart("proportion")})
+  output$search_term_sentiment <-  renderPlotly({plot_term_chart("sentiment")})
   
   ###############################################.
   # Covid stats charts 
@@ -73,6 +66,13 @@ function(input, output, session) {
     plot_trend_chart(covid_stats %>% filter(variable == "Testing - Total number of COVID-19 tests carried out by NHS Labs - Daily" ),  
                      var_chosen="value")
   })
+  
+  ###############################################.
+  ## Tables ----
+  ###############################################.
+  output$word_weekly <- renderTable({word_weekly %>% ungroup() %>% 
+      mutate(week_ending = format(week_ending,'%Y-%m-%d'))})
+  output$top_words <- renderTable({top_words })
   
   # output$hits_media_plot <- renderPlotly(plot_trend_chart())
   # output$sentiment_plot <- renderPlotly(plot_trend_chart(0, 1))
