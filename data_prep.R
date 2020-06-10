@@ -5,12 +5,13 @@ library(readr)
 library(phsmethods)
 library(lubridate)
 library(tidyr)
+library(zoo)
 
 tweet_count_data <- read_csv("data/tweets.csv") %>%
   group_by(date) %>%
   summarise(count = n(), sentiment = mean(sentiment, na.rm = T)) %>% ungroup
 
-saveRDS(tweet_count_data, "shiny_app/data/tweet_count_data.rds")
+saveRDS(tweet_count_data, "data/tweet_count_data.rds")
 
 tweet_count_term_data <- read_csv("data/tweets.csv") %>%
   filter(as.Date(date) > as.Date("2020-04-26")) %>% #no other terms before
@@ -68,7 +69,9 @@ covid_stats <- read_csv("https://statistics.gov.scot/downloads/cube-table?uri=ht
                            "Testing - Total number of COVID-19 tests carried out by Regional Testing Centres - Daily" =
                              "Testing - Total number of COVID-19 tests carried out")) %>% 
   group_by(variable, feature_code, date, area_name) %>% 
-  summarise (value =sum(value, na.rm = T))
+  summarise(value = sum(value, na.rm = T)) %>% ungroup %>% 
+  group_by(variable, feature_code, area_name) %>% 
+  mutate(week_aver= round(rollmeanr(value, k = 7, fill = NA), 1)) %>% ungroup
 
 saveRDS(covid_stats, "shiny_app/data/covid_open_data.rds")
 
