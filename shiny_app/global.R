@@ -6,11 +6,12 @@ library(shinyWidgets)
 library(shinycssloaders)
 library(dplyr)
 library(DT)
+library(zoo)
 
 tweet_count_term_data <- readRDS("data/tweet_count_term_data.rds")
 tweet_count_data <- readRDS("data/tweet_count_data.rds")
-top_words <- readRDS("data/topword_count.rds")
-word_weekly <- readRDS("data/worddata_weekly.rds")
+# top_words <- readRDS("data/topword_count.rds")
+# word_weekly <- readRDS("data/worddata_weekly.rds")
 
 covid_stats <- readRDS("data/covid_open_data.rds")
 
