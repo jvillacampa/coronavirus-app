@@ -30,10 +30,6 @@ navbarPage(id = "intabset", # id used for jumping between tabs
                                        be developed better by us or by them.)"),
                               plot_box("Average sentiment per group", "search_term_sentiment", 
                                        source = "Deep Miner"))),
-              fluidRow(column(2,h4("Top words used during the whole period"),
-                              tableOutput("top_words")),
-                       column(10, h4("Top words used split by week (this could be refined and could be split by people/location/event)"),
-                              tableOutput("word_weekly"))),
               fluidRow(column(6,
                               plot_box("Testing - Daily people found positive" , "daily_positives", 
                                        source = "SG open data"),
@@ -42,7 +38,7 @@ navbarPage(id = "intabset", # id used for jumping between tabs
                        column(6,
                               plot_box("Number of deaths by COVID-19" , "deaths", 
                                        source = "SG open data"),
-                              plot_box("Testing - Total number of COVID-19 tests carried out by NHS Labs - Daily" , "tests", 
+                              plot_box("Testing - Total number of COVID-19 tests carried out" , "tests", 
                                        source = "SG open data")))
     ) 
   ) # tabpanel bracket
