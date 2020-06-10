@@ -9,7 +9,8 @@ function(input, output, session) {
   ## Functions ----
   ###############################################.
   
-  plot_trend_chart <- function(dataset, color_chosen = "black", var_chosen,  moving_average = F) {
+  plot_trend_chart <- function(dataset, color_chosen = "black", var_chosen,  moving_average = F,
+                               aver_chosen = "week_aver") {
 
       #Creating time trend plot
       trend_plot <- plot_ly(data=dataset, x=~date) %>% 
@@ -24,7 +25,7 @@ function(input, output, session) {
       
       if ( moving_average == T) {
         trend_plot %>% 
-          add_lines(y = ~week_aver, name = "Prior 7 days average")
+          add_lines(y = ~get(aver_chosen), name = "Prior 7 days average")
       } else if ( moving_average == F) {
         trend_plot %>%  layout(showlegend = FALSE)
       }
@@ -52,6 +53,16 @@ function(input, output, session) {
   ###############################################.
   output$tweet_count <- renderPlotly(plot_trend_chart(tweet_count_data,  var_chosen="count"))
   output$tweet_sentiment <- renderPlotly(plot_trend_chart(tweet_count_data, var_chosen = "sentiment"))
+  
+  output$boris_count <- renderPlotly(plot_trend_chart(boris_data %>% filter(person == "Boris") ,  
+                                                      var_chosen="count", aver_chosen = "count_aver",  moving_average = T))
+  output$boris_sentiment <- renderPlotly(plot_trend_chart(boris_data %>% filter(person == "Boris"),
+                                                          var_chosen = "sentiment", aver_chosen = "sent_aver",  moving_average = T))
+  
+  output$dom_count <- renderPlotly(plot_trend_chart(boris_data %>% filter(person == "Dom"),  
+                                                      var_chosen="count", aver_chosen = "count_aver",  moving_average = T) )
+  output$dom_sentiment <- renderPlotly(plot_trend_chart(boris_data %>% filter(person == "Dom"),
+                                                          var_chosen = "sentiment", aver_chosen = "sent_aver",  moving_average = T))
   
   output$search_term_count <- renderPlotly({plot_term_chart("proportion")})
   output$search_term_sentiment <-  renderPlotly({plot_term_chart("sentiment")})

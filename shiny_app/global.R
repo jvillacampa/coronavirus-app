@@ -10,6 +10,7 @@ library(zoo)
 
 tweet_count_term_data <- readRDS("data/tweet_count_term_data.rds")
 tweet_count_data <- readRDS("data/tweet_count_data.rds")
+boris_data <- readRDS("data/boris_data.rds")
 # top_words <- readRDS("data/topword_count.rds")
 # word_weekly <- readRDS("data/worddata_weekly.rds")
 

@@ -56,6 +56,25 @@ word_data <- word_data %>% filter(tweet_word %in% top_words$tweet_word) %>%
 
 saveRDS(word_data, "shiny_app/data/worddata_weekly.rds")
 
+boris_data <- read_csv("data/tweets.csv") %>% 
+  mutate(boris = case_when(grepl("boris|jojo|johnson", 
+                                 tolower(tweet_text)) ~ "Boris", TRUE ~ "No"),
+         dom = case_when(grepl("dominic|cummings", 
+                               tolower(tweet_text)) ~ "Dom", TRUE ~ "No")) %>% 
+  group_by(date, boris, dom) %>% 
+  summarise(count = n(), sentiment = sum(sentiment)) %>% ungroup 
+
+boris_data <- boris_data %>% 
+  pivot_longer(c(boris,dom), names_to = "type", values_to = "person") %>% 
+  filter(person != "No") %>% 
+  group_by(date, person) %>% 
+  summarise_at(c("count", "sentiment"), sum, na.rm = T) %>% ungroup %>% 
+  mutate(sentiment = sentiment/count) %>%  #average sentiment
+  group_by(person) %>% 
+  mutate(count_aver = round(rollmeanr(count, k = 7, fill = NA), 1),
+         sent_aver = round(rollmeanr(sentiment, k = 7, fill = NA), 1)) %>% ungroup
+
+saveRDS(boris_data, "shiny_app/data/boris_data.rds")
 
 # Data from open data platform
 covid_stats <- read_csv("https://statistics.gov.scot/downloads/cube-table?uri=http%3A%2F%2Fstatistics.gov.scot%2Fdata%2Fcoronavirus-covid-19-management-information") %>%

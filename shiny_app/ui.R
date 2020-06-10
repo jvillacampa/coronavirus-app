@@ -40,7 +40,18 @@ navbarPage(id = "intabset", # id used for jumping between tabs
                               plot_box("Number of deaths by COVID-19" , "deaths", 
                                        source = "SG open data"),
                               plot_box("Testing - Total number of COVID-19 tests carried out" , "tests", 
-                                       source = "SG open data")))
+                                       source = "SG open data"))),
+              fluidRow(column(6,
+                              plot_box("Number of tweets mentioning Boris Johnson" , "boris_count", 
+                                       source = "Deep Miner"),
+                              plot_box("Number of tweets mentioning Dominic Cummings" , "dom_count", 
+                                       source = "Deep Miner")
+                              ),
+                       column(6,
+                              plot_box("Average sentiment for tweets mentioning Boris Johnson", "boris_sentiment", 
+                                       source = "Deep Miner"),
+                              plot_box("Average sentiment for tweets mentioning Dominic Cummings", "dom_sentiment", 
+                                       source = "Deep Miner")))
     ) 
   ) # tabpanel bracket
   ) # navbar bracket
