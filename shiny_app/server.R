@@ -3,21 +3,31 @@
 
 function(input, output, session) {
   
+  observeEvent(input$browser, browser()) #for debugging
+  
   ###############################################.
   ## Functions ----
   ###############################################.
   
-  plot_trend_chart <- function(dataset, color_chosen = "black", var_chosen) {
+  plot_trend_chart <- function(dataset, color_chosen = "black", var_chosen,  moving_average = F) {
 
       #Creating time trend plot
-      trend_plot <- plot_ly(data=dataset, x=~date,  y = ~get(var_chosen)) %>% 
-        add_trace(type = 'scatter', mode = 'lines+markers', 
+      trend_plot <- plot_ly(data=dataset, x=~date) %>% 
+        add_trace(y = ~get(var_chosen), type = 'scatter', mode = 'lines+markers', 
                   marker = list(size = 8, color = color_chosen), 
-                  line = list(color = color_chosen)) %>% 
+                  line = list(color = color_chosen),
+                  name = "Value") %>% 
         #Layout 
         layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
                yaxis = yaxis_plots, xaxis = xaxis_plots) %>%  
         config(displayModeBar = FALSE, displaylogo = F) # taking out plotly logo button
+      
+      if ( moving_average == T) {
+        trend_plot %>% 
+          add_lines(y = ~week_aver, name = "Prior 7 days average")
+      } else if ( moving_average == F) {
+        trend_plot %>%  layout(showlegend = FALSE)
+      }
       
   }
   
@@ -50,21 +60,23 @@ function(input, output, session) {
   # Covid stats charts 
   output$daily_positives <- renderPlotly({
     plot_trend_chart(covid_stats %>% filter(variable == "Testing - Daily people found positive"),  
-                     var_chosen="value")
+                     var_chosen="value",  moving_average = T)
     })
   output$corona_calls <- renderPlotly({
     plot_trend_chart(covid_stats %>% filter(variable == "Calls - Coronavirus helpline"),  
-                     var_chosen="value")
+                     var_chosen="value",  moving_average = T)
   })
   output$deaths <- renderPlotly({
     plot_trend_chart(covid_stats %>% filter(variable == "Number of COVID-19 confirmed deaths registered to date" ) %>% 
-                       mutate(value = value - lag(value) ),  
-                     var_chosen="value")
+                       mutate(value = value - lag(value) ) %>% 
+                       group_by(variable, feature_code, area_name) %>% 
+                       mutate(week_aver= round(rollmeanr(value, k = 7, fill = NA), 1)) %>% ungroup ,  
+                     var_chosen="value", moving_average = T)
   })
   
   output$tests <- renderPlotly({
     plot_trend_chart(covid_stats %>% filter(variable == "Testing - Total number of COVID-19 tests carried out" ),  
-                     var_chosen="value")
+                     var_chosen="value",  moving_average = T)
   })
   
   ###############################################.
