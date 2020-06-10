@@ -56,6 +56,16 @@ word_data <- word_data %>% filter(tweet_word %in% top_words$tweet_word) %>%
 
 saveRDS(word_data, "shiny_app/data/worddata_weekly.rds")
 
+# Data on symptoms
+symptom_data <- read_csv("data/tweets.csv") %>% 
+  filter(!grepl("RT ", tweet_text)) %>% #taking out retweets, maybe need the same for conversations?
+  filter(grepl("fever|cough|high temperature|lack of smell|wheeze|loss of smell|loss of taste", 
+               tolower(tweet_text)))
+
+# Very few cases none really address self-reporting of illness as they are having it
+# (a handful report that they have had it)
+
+# Data on Boris Johnson/Dominic Cumming to look at sentiment
 boris_data <- read_csv("data/tweets.csv") %>% 
   mutate(boris = case_when(grepl("boris|jojo|johnson", 
                                  tolower(tweet_text)) ~ "Boris", TRUE ~ "No"),
