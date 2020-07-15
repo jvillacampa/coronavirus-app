@@ -10,8 +10,8 @@ navbarPage(id = "intabset", # id used for jumping between tabs
     h2("Reactions to coronavirus in Twitter by Scottish residents"),
     wellPanel(column(6, "We could add filters to select area and period of time for example. ",
               "Another thing missing from this dashboard is the data for people self-reporting symptoms
-              as I haven't got it.", # ),
-              actionButton("browser", "Browser")), #for debggin
+              as I haven't got it."),
+              # actionButton("browser", "Browser")), #for debggin
               column(6, pickerInput(inputId = "term_picker", 
                 label = "Select/deselect terms of interest", 
                 choices = unique(tweet_count_term_data$search_term), 

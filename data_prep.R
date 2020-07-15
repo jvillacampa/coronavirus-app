@@ -81,8 +81,8 @@ boris_data <- boris_data %>%
   summarise_at(c("count", "sentiment"), sum, na.rm = T) %>% ungroup %>% 
   mutate(sentiment = sentiment/count) %>%  #average sentiment
   group_by(person) %>% 
-  mutate(count_aver = round(rollmeanr(count, k = 7, fill = NA), 1),
-         sent_aver = round(rollmeanr(sentiment, k = 7, fill = NA), 1)) %>% ungroup
+  mutate(count_aver = round(rollmeanr(count, k = 7, fill = NA), 3),
+         sent_aver = round(rollmeanr(sentiment, k = 7, fill = NA), 3)) %>% ungroup
 
 saveRDS(boris_data, "shiny_app/data/boris_data.rds")
 
